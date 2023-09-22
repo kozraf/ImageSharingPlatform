@@ -2,7 +2,6 @@ resource "aws_api_gateway_account" "example" {
   cloudwatch_role_arn = aws_iam_role.lambda_exec.arn
 }
 
-
 resource "aws_api_gateway_rest_api" "image_upload_api" {
   name        = "ImageUploadAPI"
   description = "API for uploading images to S3"
@@ -38,16 +37,6 @@ resource "aws_api_gateway_deployment" "image_api_deployment" {
 
   rest_api_id = aws_api_gateway_rest_api.image_upload_api.id
   stage_name  = "prod"
-}
-
-resource "aws_api_gateway_method_settings" "method_settings" {
-  rest_api_id = aws_api_gateway_rest_api.image_upload_api.id
-  stage_name  = aws_api_gateway_deployment.image_api_deployment.stage_name
-  method_path = "*/*"  # This sets settings for all methods in all resources
-
-  settings {
-    logging_level = "INFO"
-  }
 }
 
 
