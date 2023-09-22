@@ -11,5 +11,6 @@ variable "secret_key" {
 }
 
 variable "S3_BUCKET" {
-  type = string
+  description = "The name of the S3 bucket"
+  default     = "s3-image-processing-8a73"  #
 }

@@ -7,7 +7,7 @@ resource "aws_lambda_function" "image_upload_lambda" {
 
   environment {
     variables = {
-      S3_BUCKET = "s3-image-processing"
+      S3_BUCKET = var.S3_BUCKET
     }
   }
 }
@@ -18,4 +18,14 @@ resource "aws_lambda_permission" "allow_bucket" {
   function_name = aws_lambda_function.image_upload_lambda.function_name
   principal     = "s3.amazonaws.com"
   source_arn    = aws_s3_bucket.s3-image-processing.arn
+}
+
+resource "aws_lambda_permission" "allow_api_gateway" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.image_upload_lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  # Depending on how specific you want to be, you can also limit the source ARN
+  # source_arn = "${aws_api_gateway_deployment.image_api_deployment.execution_arn}/*/*"
 }

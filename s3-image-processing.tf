@@ -1,6 +1,7 @@
 # S3 Bucket for Image Processing and Web Hosting
 resource "aws_s3_bucket" "s3-image-processing" {
-  bucket = "s3-image-processing"
+  #bucket = "s3-image-processing-P42u"
+  bucket = var.S3_BUCKET
 }
 
 resource "aws_s3_bucket_public_access_block" "s3_access_block" {
@@ -41,6 +42,15 @@ resource "aws_s3_bucket_website_configuration" "s3_website_configuration" {
   }
 }
 
+resource "aws_s3_object" "website_index" {
+  bucket = aws_s3_bucket.s3-image-processing.bucket
+  key    = "index.html"
+  source = "index.html"  # Path to your index.html file on your local machine
+  etag   = filemd5("index.html")
+}
+
+
+
 
 # S3 Event to trigger Lambda function for image processing
  resource "aws_s3_bucket_notification" "bucket_notification" {
@@ -50,4 +60,7 @@ resource "aws_s3_bucket_website_configuration" "s3_website_configuration" {
     lambda_function_arn = aws_lambda_function.image_upload_lambda.arn
     events              = ["s3:ObjectCreated:*"]
   }
+
+     depends_on = [aws_lambda_function.image_upload_lambda]
+
 }

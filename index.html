@@ -1,90 +1,42 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Image Sharing Platform</title>
-    <style>
-        /* Add your styles here */
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            text-align: center;
-        }
-        .header {
-            background-color: #f1f1f1;
-            padding: 20px;
-            text-align: center;
-        }
-        .nav {
-            display: flex;
-            justify-content: center;
-            background-color: #333;
-        }
-        .nav a {
-            padding: 14px 20px;
-            display: block;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-        }
-        .nav a:hover {
-            background-color: #ddd;
-            color: black;
-        }
-    </style>
+    <title>Upload Image</title>
 </head>
 <body>
-    <div class="header">
-        <h1>Image Sharing Platform</h1>
-    </div>
-    <div class="nav">
-        <!-- Navigation links can go here -->
-        <a href="#">Home</a>
-        <a href="#">About</a>
-        <a href="#">Contact</a>
-    </div>
-    <div class="container">
-        <button id="uploadButton">Upload</button>
-        <input type="file" id="fileInput">
-        <!-- Place for links to processed images -->
-        <div id="imageLinks">
-            <!-- Links will be populated here -->
-        </div>
-    </div>
 
-    <!-- JavaScript code for image uploading -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById("uploadButton").addEventListener("click", async function() {
-                const fileInput = document.getElementById("fileInput");
-                const file = fileInput.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.readAsArrayBuffer(file);
-                    reader.onload = async function() {
-                        const arrayBuffer = reader.result;
-                        const response = await fetch("https://phqylapwr3.execute-api.us-east-1.amazonaws.com/prod", {
-                            method: "POST",
-                            body: new Uint8Array(arrayBuffer),
-                            headers: {
-                                "Content-Type": "image/jpeg"  // Change this based on your image type
-                            }
-                        });
+<h2>Upload Image to S3</h2>
+<p>Please upload a .jpg image:</p>
+<input type="file" id="fileToUpload" accept=".jpg">
+<input type="button" value="Upload" onclick="uploadToS3()">
 
-                        if (response.status === 200) {
-                            alert("Image uploaded successfully!");
-                        } else {
-                            alert("Failed to upload image.");
-                        }
-                    };
-                } else {
-                    alert("Please select a file to upload.");
-                }
+<script>
+    async function uploadToS3() {
+        const file = document.getElementById('fileToUpload').files[0];
+
+        if(!file){
+            alert('Please select a file first.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = async function(){
+            const base64 = reader.result.split(',')[1];
+            const response = await fetch('https://2mhqqe7j8g.execute-api.us-east-1.amazonaws.com/prod/image', {
+                method: 'POST',
+                body: JSON.stringify({
+                    image: base64,
+                    name: file.name
+                })
             });
-        });
-    </script>
+
+            const responseBody = await response.json();
+            console.log(responseBody);
+            alert('File uploaded successfully!');
+        }
+    }
+</script>
+
 </body>
 </html>
