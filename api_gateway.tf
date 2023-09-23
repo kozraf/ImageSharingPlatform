@@ -37,6 +37,16 @@ resource "aws_api_gateway_deployment" "image_api_deployment" {
 
   rest_api_id = aws_api_gateway_rest_api.image_upload_api.id
   stage_name  = "prod"
+
+#  provisioner "local-exec" {
+#    command = "update_html.bat ${aws_api_gateway_deployment.image_api_deployment.invoke_url}"
+#  }
+
+  # This ensures that the local-exec provisioner runs every time this resource is created or changed
+#  triggers = {
+#    always_run = "${timestamp()}"
+#  }
+
 }
 
 
@@ -112,6 +122,7 @@ resource "aws_api_gateway_integration_response" "post" {
 
 # Outputs
 
-output "api_url" {
+output "api_gateway_url" {
   value = aws_api_gateway_deployment.image_api_deployment.invoke_url
+  description = "The URL of the deployed API Gateway"
 }

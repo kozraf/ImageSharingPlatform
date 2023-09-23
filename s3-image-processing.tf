@@ -2,6 +2,8 @@
 resource "aws_s3_bucket" "s3-image-processing" {
   #bucket = "s3-image-processing-P42u"
   bucket = var.S3_BUCKET
+
+  depends_on = [aws_api_gateway_deployment.image_api_deployment]
 }
 
 resource "aws_s3_bucket_public_access_block" "s3_access_block" {
@@ -11,6 +13,18 @@ resource "aws_s3_bucket_public_access_block" "s3_access_block" {
   block_public_policy = false
   ignore_public_acls  = false
   restrict_public_buckets = false
+}
+
+resource "null_resource" "delay" {
+  provisioner "local-exec" {
+    command = "powershell Start-Sleep -Seconds 30"  # Introduce a delay of 30 seconds using PowerShell
+  }
+
+  triggers = {
+    always_run = "${timestamp()}"
+  }
+
+  depends_on = [aws_s3_bucket_public_access_block.s3_access_block]
 }
 
 # S3 Bucket Policy
@@ -29,9 +43,10 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
       }
     ]
   })
+
+  depends_on = [null_resource.delay]
+
 }
-
-
 
 # S3 Website Configuration
 resource "aws_s3_bucket_website_configuration" "s3_website_configuration" {
@@ -47,10 +62,12 @@ resource "aws_s3_object" "website_index" {
   key    = "index.html"
   source = "index.html"  # Path to your index.html file on your local machine
   etag   = filemd5("index.html")
+
+  lifecycle {
+    ignore_changes = [etag]
+  }
+
 }
-
-
-
 
 # S3 Event to trigger Lambda function for image processing
  resource "aws_s3_bucket_notification" "bucket_notification" {
@@ -63,4 +80,10 @@ resource "aws_s3_object" "website_index" {
 
      depends_on = [aws_lambda_function.image_upload_lambda]
 
+}
+
+# Outputs
+output "s3_bucket_website_url" {
+  description = "Website URL of the S3 bucket"
+  value       = "http://${aws_s3_bucket.s3-image-processing.bucket_regional_domain_name}"
 }
