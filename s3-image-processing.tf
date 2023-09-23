@@ -17,7 +17,7 @@ resource "aws_s3_bucket_public_access_block" "s3_access_block" {
 
 resource "null_resource" "delay" {
   provisioner "local-exec" {
-    command = "powershell Start-Sleep -Seconds 30"  # Introduce a delay of 30 seconds using PowerShell
+    command = "powershell Start-Sleep -Seconds 10"  # Introduce a delay of 30 seconds using PowerShell
   }
 
   triggers = {
@@ -70,7 +70,7 @@ resource "aws_s3_object" "website_index" {
 }
 
 # S3 Event to trigger Lambda function for image processing
- resource "aws_s3_bucket_notification" "bucket_notification" {
+ resource "aws_s3_bucket_notification" "bucket_notification-image_upload_lambda" {
   bucket = aws_s3_bucket.s3-image-processing.id
 
   lambda_function {
@@ -81,6 +81,22 @@ resource "aws_s3_object" "website_index" {
      depends_on = [aws_lambda_function.image_upload_lambda]
 
 }
+
+
+resource "aws_s3_bucket_notification" "bucket_notification-image_processing_lambda" {
+  bucket = aws_s3_bucket.s3-image-processing.id
+
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.image_processing_lambda.arn
+    events              = ["s3:ObjectCreated:*"]
+    filter_prefix       = "uploads/"  # Assuming you save uploaded images in an "uploads" folder in the bucket
+    filter_suffix       = ".jpg"
+  }
+
+  depends_on = [aws_lambda_permission.allow_bucket]
+}
+
+
 
 # Outputs
 output "s3_bucket_website_url" {
