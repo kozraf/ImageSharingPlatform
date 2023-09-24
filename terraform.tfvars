@@ -1,4 +1,4 @@
 region = "us-east-1"
-access_key = "AKIAWYR5A3SDQHLH5SKG"
-secret_key = "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"
-S3_BUCKET = "s3-image-processing-4334a"
+access_key = "AKIAYKF4457N2SMEVUY7"
+secret_key = "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"
+S3_BUCKET = "s3-image-processing-477777a"

@@ -45,7 +45,7 @@ resource "aws_iam_policy" "image_upload_lambda_policy" {
       },
       {
         Action   : "lambda:InvokeFunction",
-        Resource : aws_lambda_function.image_processing_lambda.arn,  # Allow imageUploadFunction to invoke imageProcessingFunction
+        Resource : module.lambdas.image_processing_lambda_arn,  # Allow imageUploadFunction to invoke imageProcessingFunction
         Effect   : "Allow"
       }
     ]
