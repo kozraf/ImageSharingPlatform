@@ -38,14 +38,13 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
         "Sid": "PublicReadGetObject",
         "Effect": "Allow",
         "Principal": "*",
-        "Action": "s3:GetObject",
+        "Action": ["s3:GetObject", "s3:PutObject"],
         "Resource": "${aws_s3_bucket.s3-image-processing.arn}/*"
       }
     ]
   })
 
   depends_on = [null_resource.delay]
-
 }
 
 # S3 Website Configuration
