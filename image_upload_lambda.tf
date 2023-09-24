@@ -2,7 +2,7 @@ resource "aws_lambda_function" "image_upload_lambda" {
   function_name = "imageUploadFunction"
   handler       = "index.handler"  // This should match with your code file and export
   role          = aws_iam_role.lambda_exec.arn
-  filename      = "image_upload_payload.zip"  // ZIP file containing your Lambda function code
+  filename      = "image_upload_lambda.zip"  // ZIP file containing your Lambda function code
   runtime       = "nodejs14.x"
 
   environment {
