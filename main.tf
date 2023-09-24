@@ -4,6 +4,16 @@ provider "aws" {
   secret_key = var.secret_key
 }
 
+terraform {
+  backend "s3" {
+    bucket         = "s3bucket4tfstate--fast-pegasus"
+    key            = "terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "tfstate_lock"
+    encrypt        = true
+  }
+}
+
 module "lambdas" {
   source         = "./modules/lambdas"
 
