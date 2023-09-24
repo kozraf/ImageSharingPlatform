@@ -22,13 +22,13 @@ resource "aws_iam_role" "lambda_exec" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_exec_s3_dynamodb" {
+resource "aws_iam_role_policy_attachment" "image_upload_lambda_policy" {
   role       = aws_iam_role.lambda_exec.name
-  policy_arn = aws_iam_policy.s3_dynamodb_access.arn
+  policy_arn = aws_iam_policy.image_upload_lambda_policy.arn
 }
 
-resource "aws_iam_policy" "s3_dynamodb_access" {
-  name        = "s3_dynamodb_access"
+resource "aws_iam_policy" "image_upload_lambda_policy" {
+  name        = "image_upload_lambda_policy"
   description = "My policy that grants necessary permissions for the app"
 
   policy = jsonencode({
@@ -42,6 +42,11 @@ resource "aws_iam_policy" "s3_dynamodb_access" {
           "s3:DeleteObject"
         ],
         Resource = "arn:aws:s3:::${var.S3_BUCKET}/*"
+      },
+      {
+        Action   : "lambda:InvokeFunction",
+        Resource : aws_lambda_function.image_processing_lambda.arn,  # Allow imageUploadFunction to invoke imageProcessingFunction
+        Effect   : "Allow"
       }
     ]
   })
