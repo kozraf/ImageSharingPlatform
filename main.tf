@@ -6,7 +6,7 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-    bucket         = "s3bucket4tfstate--fast-pegasus"
+    bucket         = "s3bucket4tfstate--classic-leech"
     key            = "terraform.tfstate"
     region         = "us-east-1"
     dynamodb_table = "tfstate_lock"
