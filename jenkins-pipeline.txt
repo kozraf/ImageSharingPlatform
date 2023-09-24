@@ -25,6 +25,19 @@ pipeline {
                 sh ('terraform ${action}')
            }
         }
+        stage ("Update index.html") {
+            steps {
+                script {
+                    // Get the API Gateway URL from Terraform outputs
+                    def apiGatewayUrl = sh(script: "terraform output api_gateway_url", returnStdout: true).trim()
 
+                    // Update the index.html with the new URL
+                    sh "sed -i \"s|https://[a-zA-Z0-9\.]*/prod/image|${apiGatewayUrl}/image|g\" index.html"
+
+                    // Upload the updated index.html to S3
+                    sh "aws s3 cp index.html s3://s3-image-processing-48888a/index.html"
+                }
+            }
+        }
     }
 }
