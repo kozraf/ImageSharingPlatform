@@ -6,7 +6,7 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-    bucket         = "s3_for_tf_state_for_imagesharingprogram"
+    bucket         = "tf-state-s3-for-imagesharingprogram"
     key            = "terraform.tfstate"
     region         = "us-east-1"
     dynamodb_table = "tfstate_lock"
