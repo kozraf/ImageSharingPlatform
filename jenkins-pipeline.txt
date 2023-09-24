@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+
+    environment {
+        // Load AWS credentials
+        AWS_CREDENTIALS = credentials('1111804f-14b5-42f0-84fd-73e5d84c1746')
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'master', url: 'https://github.com/kozraf/ImageSharingPlatform'
+            }
+        }
+
+        stage ("terraform init") {
+            steps {
+                sh ("terraform init -reconfigure")
+            }
+        }
+        stage ("Action") {
+            steps {
+                echo "Terraform action is --> ${action}"
+                sh ('terraform ${action}')
+           }
+        }
+
+    }
+}
