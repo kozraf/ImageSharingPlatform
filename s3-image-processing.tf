@@ -17,7 +17,7 @@ resource "aws_s3_bucket_public_access_block" "s3_access_block" {
 
 resource "null_resource" "delay" {
   provisioner "local-exec" {
-    command = "powershell Start-Sleep -Seconds 10"  # Introduce a delay of 30 seconds using PowerShell
+    command = "sleep 10"  # Introduce a delay of 30 seconds using PowerShell
   }
 
   triggers = {
