@@ -23,7 +23,7 @@
         reader.readAsDataURL(file);
         reader.onload = async function(){
             const base64 = reader.result.split(',')[1];
-            const response = await fetch('https://w4jgergew2b3.execute-api.us-east-1.amazonaws.com/prod/image', {
+            const response = await fetch('API_INVOKE_URL/image', {
                 method: 'POST',
                 body: JSON.stringify({
                     image: base64,
