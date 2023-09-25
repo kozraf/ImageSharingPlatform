@@ -60,6 +60,7 @@ resource "aws_s3_object" "website_index" {
   bucket = aws_s3_bucket.s3-image-processing.bucket
   key    = "index.html"
   source = "index.html"  # Path to your index.html file on your local machine
+  content_type = "text/html"
   #etag   = filemd5("index.html")
 
   lifecycle {
