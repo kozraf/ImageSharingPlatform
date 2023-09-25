@@ -1,41 +1,88 @@
 pipeline {
     agent any
 
-    environment {
+    parameters {
+        choice(name: 'STAGE_CHOICE', choices: ['init', 'plan', 'apply','destroy','index-html-update'], description: 'Which stage to run?')
+    }
+
+	    environment {
         // Load AWS credentials
         AWS_CREDENTIALS = credentials('1111804f-14b5-42f0-84fd-73e5d84c1746')
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 git branch: 'master', url: 'https://github.com/kozraf/ImageSharingPlatform'
             }
         }
 
-        stage ("terraform init") {
+        stage('Initialize terraform') {
+            when {
+                expression { params.STAGE_CHOICE == 'init' }
+            }
             steps {
+                echo "Initialize terraform..."
                 sh ("terraform init -reconfigure")
             }
         }
-        stage ("Action") {
+
+		stage('Run terraform plan') {
+            when {
+                expression { params.STAGE_CHOICE == 'plan' }
+            }
             steps {
-                echo "Terraform action is --> ${action}"
-                sh ('terraform ${action}')
-           }
+                echo "Run terraform plan..."
+                sh ("terraform plan")
+            }
         }
-        stage ("Update index.html") {
+
+		stage('Run terraform apply') {
+            when {
+                expression { params.STAGE_CHOICE == 'apply' }
+            }
+            steps {
+                echo "Deploying Infrastructure..."
+                sh ("terraform apply --auto-approve")
+            }
+        }
+
+		stage('Run terraform destroy') {
+            when {
+                expression { params.STAGE_CHOICE == 'destroy' }
+            }
+            steps {
+                echo "Destroying Infrastructure..."
+                sh ("terraform destroy --auto-approve")
+            }
+        }
+
+
+        stage('Update index.html') {
+            when {
+                expression { params.STAGE_CHOICE == 'index-html-update'}
+            }
             steps {
                 script {
                     // Get the API Gateway URL from Terraform outputs
                     def apiGatewayUrl = sh(script: "terraform output api_gateway_url", returnStdout: true).trim()
 
-                    // Update the index.html with the new URL
-                    sh "sed -i \"s|https://[a-zA-Z0-9\.]*/prod/image|${apiGatewayUrl}/image|g\" index.html"
+                    //Display
+                    sh ('terraform output api_gateway_url')
 
-                    // Upload the updated index.html to S3
-                    sh "aws s3 cp index.html s3://s3-image-processing-48888a/index.html"
+                    // Update the index.html with the new URL
+                    //sh "sed -i \"s|https://[a-zA-Z0-9\\.]*//prod/image|${apiGatewayUrl}/image|g\" index.html"
+                    sh ('sleep 5')
+                    sh ('cat index.html')
+                    sh "sed -i \"s|API_INVOKE_URL|${apiGatewayUrl}|g\" index.html"
+                    sh ('cat index.html')
+                    //sh ('ls -l')
+                    //sh ('rm index.html')
+                    sh ('ls -l')
+					sh "terraform destroy -target=aws_s3_object.website_index -auto-approve"
+					sh ('sleep 15')
+					sh "terraform plan"
+					sh "terraform apply -target=aws_s3_object.website_index -auto-approve"
                 }
             }
         }
