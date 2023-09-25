@@ -1,42 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Upload Image</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Sharing Platform</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        input[type="file"], input[type="submit"] {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            width: 100%;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            text-align: center;
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
 </head>
 <body>
-
-<h2>Upload Image to S3</h2>
-<p>Please upload a .jpg image:</p>
-<input type="file" id="fileToUpload" accept=".jpg">
-<input type="button" value="Upload" onclick="uploadToS3()">
-
-<script>
-    async function uploadToS3() {
-        const file = document.getElementById('fileToUpload').files[0];
-
-        if(!file){
-            alert('Please select a file first.');
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = async function(){
-            const base64 = reader.result.split(',')[1];
+<div class="container">
+    <h1>Upload Image</h1>
+    <form action="" method="POST" enctype="multipart/form-data">
+        <label for="file">Choose an image to upload:</label>
+        <input type="file" name="file" id="file" required>
+        <br>
+        <input type="submit" value="Upload Image">
+    </form>
+    <div class="feedback"></div>
+    <script>
+        const form = document.querySelector('form');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.querySelector('input[type="file"]');
+            if (!fileInput.files.length) {
+                return;
+            }
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
             const response = await fetch('API_INVOKE_URL/image', {
                 method: 'POST',
-                body: JSON.stringify({
-                    image: base64,
-                    name: file.name
-                })
+                body: formData,
             });
-
-            const responseBody = await response.json();
-            console.log(responseBody);
-            alert('File uploaded successfully!');
-        }
-    }
-</script>
-
+            const feedback = document.querySelector('.feedback');
+            if (response.status === 200) {
+                feedback.textContent = 'Image uploaded successfully!';
+                feedback.classList.remove('error');
+            } else {
+                feedback.textContent = 'Failed to upload the image. Please try again.';
+                feedback.classList.add('error');
+            }
+        });
+    </script>
+</div>
 </body>
 </html>
