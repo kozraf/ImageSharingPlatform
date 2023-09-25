@@ -60,7 +60,7 @@ resource "aws_s3_object" "website_index" {
   bucket = aws_s3_bucket.s3-image-processing.bucket
   key    = "index.html"
   source = "index.html"  # Path to your index.html file on your local machine
-  etag   = filemd5("index.html")
+  #etag   = filemd5("index.html")
 
   lifecycle {
     ignore_changes = [etag]
@@ -80,21 +80,6 @@ resource "aws_s3_object" "website_index" {
   depends_on = [module.lambdas.image_upload_lambda]
 
 }
-
-/*
-resource "aws_s3_bucket_notification" "bucket_notification-image_processing_lambda" {
-  bucket = aws_s3_bucket.s3-image-processing.id
-
-  lambda_function {
-    lambda_function_arn = aws_lambda_function.image_processing_lambda.arn
-    events              = ["s3:ObjectCreated:*"]
-    filter_prefix       = "uploads/"  # Assuming you save uploaded images in an "uploads" folder in the bucket
-    filter_suffix       = ".jpg"
-  }
-
-  depends_on = [aws_lambda_permission.allow_bucket]
-}
-*/
 
 
 # Outputs
