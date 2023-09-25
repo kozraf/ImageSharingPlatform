@@ -69,6 +69,7 @@ resource "aws_s3_object" "website_index" {
 
 }
 
+/*
 # S3 Event to trigger Lambda function for image processing
  resource "aws_s3_bucket_notification" "bucket_notification-image_upload_lambda" {
   bucket = aws_s3_bucket.s3-image-processing.id
@@ -79,9 +80,8 @@ resource "aws_s3_object" "website_index" {
   }
 
   depends_on = [module.lambdas.image_upload_lambda]
-
 }
-
+*/
 
 # Outputs
 output "s3_bucket_website_url" {
