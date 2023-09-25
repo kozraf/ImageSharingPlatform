@@ -76,6 +76,9 @@ resource "aws_s3_object" "website_index" {
     lambda_function_arn = module.lambdas.image_processing_lambda_arn
     events              = ["s3:ObjectCreated:*"]
   }
+
+  depends_on = [module.lambdas.image_upload_lambda]
+
 }
 
 /*
