@@ -1,4 +1,4 @@
-resource "aws_api_gateway_account" "example" {
+resource "aws_api_gateway_account" "api_gw_account" {
   cloudwatch_role_arn = aws_iam_role.lambda_exec.arn
 }
 
@@ -108,11 +108,4 @@ resource "aws_api_gateway_integration_response" "post" {
   }
 
   depends_on = [aws_api_gateway_integration.lambda_integration]
-}
-
-# Outputs
-
-output "api_gateway_url" {
-  value = aws_api_gateway_deployment.image_api_deployment.invoke_url
-  description = "The URL of the deployed API Gateway"
 }

@@ -26,7 +26,7 @@ resource "aws_lambda_permission" "allow_api_gateway" {
   function_name = aws_lambda_function.image_upload_lambda.function_name
   principal     = "apigateway.amazonaws.com"
 
-  # Depending on how specific you want to be, you can also limit the source ARN
+  # Below to harden source even further
   # source_arn = "${aws_api_gateway_deployment.image_api_deployment.execution_arn}/*/*"
 }
 
