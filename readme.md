@@ -11,6 +11,10 @@ Users can upload images using a simple web page to S3 bucket using 1st Lambda fu
 where 2nd Lambda function will generate multiple versions of the image with varying resolutions. 
 All processed images are stored in an S3 bucket and are available for download.
 
+## Design
+
+![design](./design_pictures/design.jpg)
+
 ## Features
 - User-friendly web interface for image uploads.
 - Automated image processing upon upload.
