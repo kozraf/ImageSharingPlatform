@@ -53,3 +53,7 @@ All processed images are stored in an S3 bucket and are available for download.
 
 ## Contributing
 This is an open-source platform, and contributions are welcome. If you find any issues or have feature requests, please open an issue in the repository. For major changes, please open an issue first to discuss what you would like to change.
+
+## License
+
+The scripts, configurations, and documentation in this project are licensed under the MIT License. This license applies only to the scripts, configurations, and documentation contained in this repository and not to the software they interact with. 
